@@ -2,7 +2,7 @@ import fs from 'fs-extra';
 import { createWriteStream } from 'node:fs';
 import { randomBytes } from 'node:crypto';
 import { finished } from 'node:stream/promises';
-import { OsvOfflineDb, ecosystems } from '@renovatebot/osv-offline-db';
+import { Osv, OsvOfflineDb, ecosystems } from '@mintmaker/osv-offline-db';
 import { GitHub } from './client/github.ts';
 import signale from 'signale';
 import { OsvDownloader } from './client/osv.ts';

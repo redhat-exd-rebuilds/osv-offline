@@ -1,7 +1,7 @@
+import fs from 'fs-extra';
 import { OsvOffline } from './osv-offline.ts';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import fs from 'fs-extra';
-import { OsvOfflineDb } from '@renovatebot/osv-offline-db';
+import { OsvOfflineDb } from '@mintmaker/osv-offline-db';
 
 describe('packages/osv-offline/src/lib/osv-offline.int', () => {
   let osvOffline: OsvOffline;
@@ -29,6 +29,14 @@ describe('packages/osv-offline/src/lib/osv-offline.int', () => {
       );
 
       expect(result).toEqual([]);
+    });
+  });
+
+  describe('getContainerVulnerabilities', () => {
+    it('returns empty array for invalid package', async () => {
+      const result = await osvOffline.getContainerVulnerabilities("quay.io/some/repo");
+
+      expect(result).toBeEmptyArray();
     });
   });
 });

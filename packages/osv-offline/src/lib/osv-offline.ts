@@ -1,4 +1,4 @@
-import { Ecosystem, Osv, OsvOfflineDb } from '@renovatebot/osv-offline-db';
+import { Ecosystem, Osv, OsvOfflineDb } from '@mintmaker/osv-offline-db';
 import { tryDownloadDb } from './download.ts';
 import debug from 'debug';
 
@@ -48,5 +48,16 @@ export class OsvOffline {
 
   [Symbol.dispose](): void {
     this.osvOfflineDb?.[Symbol.dispose]();
+  }
+
+  /**
+   * Query the local database for any container vulnerabilities
+   * @param repository The repository name (in the format of <registry>/<org>/<repo>)
+   * @returns An array of {@link Osv.Vulnerability} or an empty array if none are found
+   */
+   async getContainerVulnerabilities(
+    repository: string
+  ): Promise<Osv.Vulnerability[]> {
+    return this.osvOfflineDb.query_containers(repository);
   }
 }

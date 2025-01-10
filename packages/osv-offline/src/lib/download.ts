@@ -1,7 +1,7 @@
 import fs from 'fs-extra';
 import got from 'got';
 import { pipeline } from 'node:stream/promises';
-import { OsvOfflineDb } from '@renovatebot/osv-offline-db';
+import { OsvOfflineDb } from '@mintmaker/osv-offline-db';
 import path from 'path';
 import { DateTime } from 'luxon';
 import AdmZip from 'adm-zip';

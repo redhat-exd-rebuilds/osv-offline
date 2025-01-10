@@ -58,6 +58,57 @@ describe('packages/osv-offline-db/src/lib/db.int', () => {
   afterAll(async () => {
     await fs.rm(rootDir, { recursive: true, force: true });
   });
+    
+  const containerVuln: Vulnerability & { _id: string } = {
+    _id: "abcdef",
+    schema_version: "1.2.3",
+    id: "GHSA-22cc-w7xm-rfhx",
+    modified: "2024-06-21T19:36:07.296811Z",
+    published: "2024-06-20T19:53:30Z",
+    aliases: ["CVE-2019-7617", "PYSEC-2019-178"],
+    related: [
+      "CGA-2ph7-wp75-g3rf",
+      "CGA-326j-45xp-qqrg",
+      "CGA-3727-xg6m-m6g6"
+    ],
+    summary: "redis-py Race Condition vulnerability",
+    details:
+      "redis-py before 4.5.3, as used in ChatGPT and other products, leaves a connection open after canceling",
+    severity: [
+      {
+        type: "CVSS_V3",
+        score: "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H"
+      }
+    ],
+    affected: [
+      {
+        package: {
+          ecosystem: "Docker",
+          name: "quay.io/prometheus/node-exporter",
+          purl: "pkg:oci/assisted-installer-agent-rhel8@sha256:ca8d86079cd97908146284f1da90964c78cae7b9e45b7f44fb4c3c5e44c0cfb2?arch=arm64&repository_url=registry.redhat.io/multicluster-engine/assisted-installer-agent-rhel8&tag=v2.4.4-8"
+        }
+      },
+      {
+        package: {
+          ecosystem: "Docker",
+          name: "quay.io/prometheus/nodaae-exporter",
+          purl: "pkg:oci/assisted-installer-agent-rhel8@sha256:ca8d86079cd97908146284f1da90964c78cae7b9e45b7f44fb4c3c5e44c0cfb2?arch=arm64&repository_url=registry.redhat.io/multicluster-engine/assisted-installer-agent-rhel8&tag=v2.4.4-8"
+        }
+      }
+    ]
+  }
+
+  beforeAll(async () => {
+    await fs.ensureDir(OsvOfflineDb.rootDirectory);
+
+    const dbFile = path.join(OsvOfflineDb.rootDirectory, 'npm.nedb');
+    await fs.writeFile(dbFile, JSON.stringify(sampleVuln), 'utf8');
+
+    const containerDbFile = path.join(OsvOfflineDb.rootDirectory, 'docker.nedb');
+    await fs.writeFile(containerDbFile, JSON.stringify(containerVuln), 'utf8');
+
+    osvOfflineDb = await OsvOfflineDb.create();
+  });
 
   async function createDbWithContent(fileName: string, content: string) {
     await fs.ensureDir(rootDir);
@@ -514,6 +565,19 @@ describe('packages/osv-offline-db/src/lib/db.int', () => {
         (r) => r.length === 1 && r[0].id === 'V2'
       );
       expect(result[0].id).toBe('V2');
+    });
+  });
+
+  describe('query_containers', () => {
+    it('works', async () => {
+      const result = await osvOfflineDb.query_containers('quay.io/prometheus/node-exporter');
+      expect(result).toStrictEqual([containerVuln]);
+    });
+
+    it('returns empty array for invalid package', async () => {
+      const result = await osvOfflineDb.query_containers('this-package-doesnt-exist');
+
+      expect(result).toBeEmptyArray();
     });
   });
 });
