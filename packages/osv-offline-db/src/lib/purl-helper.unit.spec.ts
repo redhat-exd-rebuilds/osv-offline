@@ -17,6 +17,7 @@ describe('packages/osv-offline-db/src/lib/purl-helper.unit', () => {
       ${'Pub'}       | ${'dio'}                            | ${'pkg:pub/dio'}
       ${'PyPI'}      | ${'django'}                         | ${'pkg:pypi/django'}
       ${'RubyGems'}  | ${'rails-html-sanitizer'}           | ${'pkg:gem/rails-html-sanitizer'}
+      ${'RPM'}       | ${'kernel-headers'}                 | ${'pkg:rpm/redhat/kernel-headers'}
     `('$ecosystem | $packageName', ({ ecosystem, packageName, purl }) => {
       expect(packageToPurl(ecosystem as Ecosystem, packageName as string)).toBe(
         purl
