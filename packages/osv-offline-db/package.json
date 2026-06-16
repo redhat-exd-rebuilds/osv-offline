@@ -1,6 +1,6 @@
 {
   "name": "@mintmaker/osv-offline-db",
-  "version": "0.0.0-semantic-release",
+  "version": "3.0.0",
   "main": "dist/index.js",
   "license": "MIT",
   "type": "module",
