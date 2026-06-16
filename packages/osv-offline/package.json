@@ -1,6 +1,6 @@
 {
   "name": "@mintmaker/osv-offline",
-  "version": "0.0.0-semantic-release",
+  "version": "3.0.0",
   "main": "dist/index.js",
   "license": "MIT",
   "type": "module",
@@ -12,7 +12,7 @@
     "url": "https://github.com/redhat-exd-rebuilds/osv-offline.git"
   },
   "dependencies": {
-    "@mintmaker/osv-offline-db": "workspace:*",
+    "@mintmaker/osv-offline-db": "3.0.0",
     "adm-zip": "~0.5.17",
     "debug": "^4.4.3",
     "fs-extra": "^11.3.5",

@@ -2,7 +2,7 @@
   "name": "@mintmaker/osv-offline-monorepo",
   "private": true,
   "type": "module",
-  "version": "0.0.0-semantic-release",
+  "version": "3.0.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/redhat-exd-rebuilds/osv-offline.git"
