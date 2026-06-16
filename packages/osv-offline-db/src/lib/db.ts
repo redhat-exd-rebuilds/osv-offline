@@ -245,12 +245,47 @@ export class OsvOfflineDb {
     }
   }
 
-  async query_containers(
-    repository: string
-  ): Promise<Osv.Vulnerability[]> {
-    return await this.db["Docker" as Ecosystem].findAsync({
-      'affected.package.name': repository,
-      'affected.package.ecosystem': 'Docker'
-    });
+  async query_containers(repository: string): Promise<Vulnerability[]> {
+    if (this.disposed) {
+      throw new Error('Database disposed');
+    }
+    const data = await this._load('Docker');
+
+    if (!data) {
+      return [];
+    }
+
+    const pointers = data.index.get(repository);
+
+    if (!pointers || pointers.length === 0) {
+      return [];
+    }
+
+    const advisories = await Promise.all(
+      pointers.map(async ({ offset, length }) => {
+        const buffer = Buffer.allocUnsafe(length);
+        const { bytesRead } = await readAsync(
+          data.fd,
+          buffer,
+          0,
+          length,
+          offset
+        );
+        return JSON.parse(
+          buffer.toString('utf8', 0, bytesRead)
+        ) as Vulnerability;
+      })
+    );
+
+    if (this.disposed) return [];
+
+    return advisories.filter((vuln) =>
+      vuln.affected?.some(
+        (a) =>
+          a.package?.name === repository &&
+          (a.package.ecosystem === 'Docker' ||
+            a.package.ecosystem.startsWith(`Docker:`))
+      )
+    );
   }
 }

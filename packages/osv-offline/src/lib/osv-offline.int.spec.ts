@@ -34,9 +34,10 @@ describe('packages/osv-offline/src/lib/osv-offline.int', () => {
 
   describe('getContainerVulnerabilities', () => {
     it('returns empty array for invalid package', async () => {
-      const result = await osvOffline.getContainerVulnerabilities("quay.io/some/repo");
+      const result =
+        await osvOffline.getContainerVulnerabilities('quay.io/some/repo');
 
-      expect(result).toBeEmptyArray();
+      expect(result).toEqual([]);
     });
   });
 });
